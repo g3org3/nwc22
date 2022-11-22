@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     // byId[id].bets.push(bet)
     if (byMatchNumber[bet.match_number]) {
-      byId[id].points = calcPoints(byMatchNumber[bet.match_number], bet)
+      byId[id].points += calcPoints(byMatchNumber[bet.match_number], bet)
     }
 
     return byId
