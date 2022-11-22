@@ -1,25 +1,8 @@
 import { DateTime } from 'luxon'
+import Image from 'next/image'
+import PocketBase from 'pocketbase'
 
-const btn = [
-  'focus:outline-none',
-  'focus:ring-2',
-  'focus:ring-slate-400',
-  'focus:ring-offset-2',
-  'focus:ring-offset-slate-50',
-  'text-white',
-  'font-semibold',
-  'h-10',
-  'px-6',
-  'rounded-lg',
-  'w-full',
-  'flex',
-  'items-center',
-  'justify-center',
-  'sm:w-auto',
-  'bg-sky-500',
-  'highlight-white/20',
-  'hover:bg-sky-400',
-].join(' ')
+import MatchScore from './MatchScore'
 
 export const getMatches = async (): Promise<TMatchD[]> => {
   const res = await fetch('https://fixturedownload.com/feed/json/fifa-world-cup-2022')
@@ -58,13 +41,19 @@ const Match = (props: Props) => {
   const isStarted = props.match.Date.getTime() < today
 
   return (
-    <div className="flex flex-col p-4 bg-white container gap-2 border">
+    <div className="flex flex-col p-4 bg-white gap-2 border my-2 shadow" style={{ width: '100%' }}>
       <div className="flex">
         <div className="flex flex-col items-center" style={{ width: '35%' }}>
-          <div className="bg-red-400" style={{ width: '50px', height: '50px' }}></div>
+          <Image
+            className="border"
+            alt={props.match.HomeTeam + "'s Country Flag"}
+            height={60}
+            width={60}
+            src={'https://countryflagsapi.com/png/' + props.match.HomeTeam.toLocaleLowerCase()}
+          />
           <div className="text-center">{props.match.HomeTeam}</div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2" style={{ width: '30%' }}>
           <div className="flex flex-col items-center">
             <div>{props.match.Group}</div>
             <div>
@@ -76,34 +65,19 @@ const Match = (props: Props) => {
               </div>
             )}
           </div>
-          <div className="flex gap-2">
-            <input
-              disabled={isStarted}
-              name="homeScore"
-              style={{ fontSize: '30px', height: '40px', width: '40px' }}
-              className={isStarted ? 'text-center' : 'text-center border'}
-            />
-            <span>vs</span>
-            <input
-              disabled={isStarted}
-              name="awayScore"
-              style={{ fontSize: '30px', height: '40px', width: '40px' }}
-              className={isStarted ? 'text-center' : 'text-center border'}
-            />
-          </div>
+          <MatchScore isStarted={isStarted} match={props.match} />
         </div>
         <div className="flex flex-col items-center" style={{ width: '35%' }}>
-          <div className="bg-red-400" style={{ width: '50px', height: '50px' }}></div>
+          <Image
+            className="border"
+            alt={props.match.AwayTeam + "'s Country Flag"}
+            height={60}
+            width={60}
+            src={'https://countryflagsapi.com/png/' + props.match.AwayTeam.toLocaleLowerCase()}
+          />
           <div className="text-center">{props.match.AwayTeam} </div>
         </div>
       </div>
-      {isStarted ? (
-        <div className="text-center font-bold">
-          {props.match.HomeTeamScore} - {props.match.AwayTeamScore}
-        </div>
-      ) : (
-        <button className={btn}>save</button>
-      )}
     </div>
   )
 }

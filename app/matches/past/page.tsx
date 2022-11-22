@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 
 import Match, { getMatches } from '../Match'
+import MatchSkeleton from '../MatchSkeleton'
 
 const PastMatches = async () => {
   const matches = await getMatches()
