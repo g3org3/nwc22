@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import PocketBase from 'pocketbase'
 import { useEffect, useLayoutEffect, useState } from 'react'
@@ -120,15 +121,6 @@ const MatchScore = (props: Props) => {
     }
   }, [])
 
-  const onLogin = () => {
-    const name = prompt('Nombre o apodo?')
-    if (name) {
-      setId(name.toLocaleLowerCase().trim())
-      localStorage.setItem('login', name.toLocaleLowerCase().trim())
-      window.document.location.reload()
-    }
-  }
-
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
     const state = Object.values(e.target)
@@ -227,9 +219,9 @@ const MatchScore = (props: Props) => {
         ) : (
           <>
             {!id && (
-              <div onClick={onLogin} className={btn}>
+              <Link className={btn} href="/login">
                 login
-              </div>
+              </Link>
             )}
             <button
               disabled={createMatch.loading}

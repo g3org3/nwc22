@@ -1,3 +1,8 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 interface Props {
   //
 }
@@ -24,12 +29,30 @@ const btn = [
 ].join(' ')
 
 const Login = (props: Props) => {
+  const [name, setName] = useState('')
+  const router = useRouter()
+
+  const onLogin: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault()
+    localStorage.setItem('login', name.toLocaleLowerCase().trim())
+    router.push('/matches/today')
+  }
+
   return (
-    <div className="flex flex-col gap-4 p-2 container" style={{ maxWidth: '400px', margin: '0 auto' }}>
+    <form
+      onSubmit={onLogin}
+      className="flex flex-col gap-4 p-2 container"
+      style={{ maxWidth: '400px', margin: '0 auto' }}
+    >
       <div className="text-3xl">Login</div>
-      <input className="p-2" placeholder="id" />
+      <input
+        value={name}
+        onChange={({ target: { value } }) => setName(value)}
+        className="p-2"
+        placeholder="name"
+      />
       <button className={btn}>login</button>
-    </div>
+    </form>
   )
 }
 
