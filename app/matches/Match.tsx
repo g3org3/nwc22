@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import Image from 'next/image'
 
+import MatchDate from './MatchDate'
 import MatchScore from './MatchScore'
 
 export const getMatches = async (): Promise<TMatchD[]> => {
@@ -55,14 +56,7 @@ const Match = (props: Props) => {
         <div className="flex flex-col gap-2" style={{ width: '30%' }}>
           <div className="flex flex-col items-center">
             <div>{props.match.Group}</div>
-            <div>
-              {DateTime.fromJSDate(props.match.Date).setLocale('us').toLocaleString(DateTime.TIME_SIMPLE)}
-            </div>
-            {!isStarted && (
-              <div className="text-center">
-                {DateTime.fromJSDate(props.match.Date).setLocale('es').toRelativeCalendar()}
-              </div>
-            )}
+            <MatchDate isStarted={isStarted} match={props.match} />
           </div>
         </div>
         <div className="flex flex-col items-center" style={{ width: '35%' }}>
