@@ -195,7 +195,7 @@ const MatchScore = (props: Props) => {
             name="homeScore"
             defaultValue={dbMatch?.home_score}
             style={{ fontSize: '30px', height: '45px', width: '45px' }}
-            className={props.isStarted ? 'bg-slate-100 text-slate-400 text-center' : 'text-center border'}
+            className={props.isStarted ? 'bg-slate-100 text-slate-600 text-center' : 'text-center border'}
           />
           <span>vs</span>
           <input
@@ -204,7 +204,7 @@ const MatchScore = (props: Props) => {
             name="awayScore"
             defaultValue={dbMatch?.away_score}
             style={{ fontSize: '30px', height: '45px', width: '45px' }}
-            className={props.isStarted ? 'bg-slate-100 text-slate-400 text-center' : 'text-center border'}
+            className={props.isStarted ? 'bg-slate-100 text-slate-600 text-center' : 'text-center border'}
           />
         </div>
         {props.isStarted ? (
