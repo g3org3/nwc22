@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 
 import Match, { getMatches } from '../Match'
 
+export const revalidate = 10
+
 const TodayMatches = async () => {
   const matches = await getMatches()
   const todayMatches = matches.filter((m) => DateTime.fromJSDate(m.Date).toRelativeCalendar() === 'today')

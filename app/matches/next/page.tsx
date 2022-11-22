@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 
 import Match, { getMatches } from '../Match'
 
+export const revalidate = 10
+
 const NextMatches = async () => {
   const matches = await getMatches()
   const today = Date.now()

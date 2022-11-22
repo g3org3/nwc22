@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
 
 import Match, { getMatches } from '../Match'
-import MatchSkeleton from '../MatchSkeleton'
+
+export const revalidate = 10
 
 const PastMatches = async () => {
   const matches = await getMatches()
