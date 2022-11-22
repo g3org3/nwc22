@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon'
 import Image from 'next/image'
-import PocketBase from 'pocketbase'
 
 import MatchScore from './MatchScore'
 
