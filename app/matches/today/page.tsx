@@ -11,6 +11,7 @@ const TodayMatches = async () => {
 
   return (
     <>
+      {todayMatches.length === 0 && <div className="text-center text-3xl py-5">No matches today</div>}
       {todayMatches.map((match) => (
         <Match key={match.MatchNumber} match={match} />
       ))}

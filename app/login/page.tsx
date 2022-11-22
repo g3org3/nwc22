@@ -35,7 +35,7 @@ const Login = (props: Props) => {
   const onLogin: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
     localStorage.setItem('login', name.toLocaleLowerCase().trim())
-    router.push('/matches/today')
+    router.push('/matches/tomorrow')
   }
 
   return (
