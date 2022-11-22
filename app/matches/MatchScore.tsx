@@ -125,6 +125,7 @@ const MatchScore = (props: Props) => {
     if (name) {
       setId(name.toLocaleLowerCase().trim())
       localStorage.setItem('login', name.toLocaleLowerCase().trim())
+      window.document.location.reload()
     }
   }
 
