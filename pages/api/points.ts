@@ -2,6 +2,46 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import PocketBase from 'pocketbase'
 
+export interface TMatch {
+  MatchNumber: number
+  RoundNumber: number
+  DateUtc: string
+  Location: string
+  HomeTeam: string
+  AwayTeam: string
+  Group: string
+  HomeTeamScore: number
+  AwayTeamScore: number
+}
+
+interface TBet {
+  away_score: number
+  home_score: number
+  created: string
+  id: string
+  match_number: number
+  user_id: string
+  updated: string
+}
+
+function calcPoints(match: TMatch, bet: TBet): number {
+  let points = 0
+  if (bet.home_score - bet.away_score > 0 && match.HomeTeamScore - match.AwayTeamScore > 0) {
+    points = 1
+  }
+  if (bet.home_score - bet.away_score < 0 && match.HomeTeamScore - match.AwayTeamScore < 0) {
+    points = 1
+  }
+  if (bet.home_score - bet.away_score == 0 && match.HomeTeamScore - match.AwayTeamScore == 0) {
+    points = 1
+  }
+  if (bet.home_score == match.HomeTeamScore && bet.away_score == match.AwayTeamScore) {
+    points = 3
+  }
+
+  return points
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const id = req.query.id
   const client = new PocketBase('https://pocketbase-production-f6a9.up.railway.app')
@@ -18,28 +58,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const users = await client.collection('user_ligas').getList(0, 50, { filter: `liga_name = '${liga}'` })
   const userids = users.items.map((u) => u.user_id)
 
-  const bets = (
+  // @ts-ignore
+  const bets: TBet[] = (
     await client
       .collection('bets')
       .getList(0, 200, { filter: userids.map((u) => `user_id = '${u}'`).join(' || ') })
   ).items
 
-  const betsByUser = bets.reduce((byId, bet) => {
+  const response = await fetch('https://fixturedownload.com/feed/json/fifa-world-cup-2022')
+  const matches = (await response.json()) as TMatch[]
+
+  const byMatchNumber: Record<number, TMatch> = matches
+    .filter((m) => m.HomeTeamScore !== null)
+    .reduce<Record<number, TMatch>>((byId, m) => {
+      byId[m.MatchNumber] = m
+
+      return byId
+    }, {})
+
+  const betsByUser = bets.reduce<Record<string, any>>((byId, bet) => {
     const id = bet.user_id as keyof typeof byId
     if (!byId[id]) {
-      // @ts-ignore
-      byId[id] = []
+      byId[id] = { id, points: 0, bets: [] }
     }
-    // @ts-ignore
-    byId[id].push(bet)
+    byId[id].bets.push(bet)
+    if (byMatchNumber[bet.match_number]) {
+      byId[id].points = calcPoints(byMatchNumber[bet.match_number], bet)
+    }
 
     return byId
   }, {})
-
-  const response = await fetch('https://fixturedownload.com/feed/json/fifa-world-cup-2022')
-  const data = await response.json()
-
-  // check points
 
   res.status(200).json({ bets, betsByUser, userids })
 }

@@ -1,38 +1,5 @@
 'use client'
-import PocketBase from 'pocketbase'
-import { use, useEffect, useState } from 'react'
-
-import { TMatch } from '../Match'
-
-interface Props {
-  //
-}
-
-interface TLiga {
-  liga_name: string
-  user_id: string
-  id: string
-  created: string
-  updated: string
-}
-
-interface TBet {
-  away_score: number
-  home_score: number
-  created: string
-  id: string
-  match_number: number
-  user_id: string
-  updated: string
-}
-
-interface Api<T> {
-  items: T[]
-  page: number
-  perPage: number
-  totalItems: number
-  totalPages: number
-}
+import { useEffect, useState } from 'react'
 
 const useQuery = <T,>(
   key: string,
@@ -59,27 +26,11 @@ const useQuery = <T,>(
   return { data, refresh, loading: status === 'loading' && data !== null }
 }
 
-const fetchMatches = async () => {
-  const res = await fetch('https://fixturedownload.com/feed/json/fifa-world-cup-2022')
-  const data = (await res.json()) as TMatch[]
-
-  return data
-}
-
-const fetchMap = new Map<string, Promise<any>>()
-function queryClient<QueryResult>(name: string, query: () => Promise<QueryResult>): Promise<QueryResult> {
-  if (!fetchMap.has(name)) {
-    fetchMap.set(name, query())
-  }
-
-  return fetchMap.get(name)!
-}
-
 export const revalidate = 10
 
-const LeaderB = (props: Props) => {
+const LeaderB = () => {
   const [id, setId] = useState<string | null>(null)
-  const { data } = useQuery<{ userids: string[] }>(
+  const { data } = useQuery<{ betsByUser: Record<string, { id: string; points: number }> }>(
     'get-points',
     () => fetch('/api/points?id=' + id).then((r) => r.json()),
     id
@@ -92,16 +43,18 @@ const LeaderB = (props: Props) => {
     }
   }, [])
 
+  const users = Object.values(data?.betsByUser || {}).sort((a, b) => b.points - a.points)
+
   return (
     <div className="flex flex-col">
       <div className="text-3xl">Leaderboard</div>
       <div className="flex flex-col">
-        {data?.userids?.map((u, i) => (
-          <div key={u} className="bg-white p-2 border flex justify-between">
+        {users.map((u, i) => (
+          <div key={u.id} className="bg-white p-2 border flex justify-between">
             <div>
-              {i + 1}. {u}
+              {i + 1}. {u.id}
             </div>
-            <div className="border px-2">0</div>
+            <div className="border px-2">{u.points}</div>
           </div>
         ))}
       </div>

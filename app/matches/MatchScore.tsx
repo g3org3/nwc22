@@ -163,22 +163,20 @@ const MatchScore = (props: Props) => {
     }
   }
 
-  const homeScore = dbMatch?.home_score || ''
-  const awayScore = dbMatch?.away_score || ''
+  const homeScore = Number(dbMatch?.home_score)
+  const awayScore = Number(dbMatch?.away_score)
 
   let points = 0
   let bgColor = 'bg-red-200'
-  if (
-    Number(homeScore) - Number(awayScore) > 0 &&
-    props.match.HomeTeamScore - props.match.AwayTeamScore > 0
-  ) {
+  if (homeScore - awayScore > 0 && props.match.HomeTeamScore - props.match.AwayTeamScore > 0) {
     points = 1
     bgColor = 'bg-green-200'
   }
-  if (
-    Number(homeScore) - Number(awayScore) < 0 &&
-    props.match.HomeTeamScore - props.match.AwayTeamScore < 0
-  ) {
+  if (homeScore - awayScore < 0 && props.match.HomeTeamScore - props.match.AwayTeamScore < 0) {
+    points = 1
+    bgColor = 'bg-green-200'
+  }
+  if (homeScore - awayScore === 0 && props.match.HomeTeamScore - props.match.AwayTeamScore === 0) {
     points = 1
     bgColor = 'bg-green-200'
   }
@@ -195,7 +193,7 @@ const MatchScore = (props: Props) => {
             disabled={createMatch.loading || props.isStarted}
             type="number"
             name="homeScore"
-            defaultValue={homeScore}
+            defaultValue={dbMatch?.home_score}
             style={{ fontSize: '30px', height: '45px', width: '45px' }}
             className={props.isStarted ? 'bg-slate-100 text-slate-400 text-center' : 'text-center border'}
           />
@@ -204,7 +202,7 @@ const MatchScore = (props: Props) => {
             disabled={createMatch.loading || props.isStarted}
             type="number"
             name="awayScore"
-            defaultValue={awayScore}
+            defaultValue={dbMatch?.away_score}
             style={{ fontSize: '30px', height: '45px', width: '45px' }}
             className={props.isStarted ? 'bg-slate-100 text-slate-400 text-center' : 'text-center border'}
           />
