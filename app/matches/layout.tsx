@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const MatchLayout = async ({ children }: { children: JSX.Element }) => {
+const MatchLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col flex-1">
       <div className="flex justify-between py-2">
