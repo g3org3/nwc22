@@ -214,7 +214,7 @@ const MatchScore = (props: Props) => {
             <div className={'text-center font-bold ' + bgColor}>
               real score: {props.match.HomeTeamScore} - {props.match.AwayTeamScore}
             </div>
-            <div className="text-center">+{points}</div>
+            <div className="text-center">points: +{points}</div>
           </div>
         ) : (
           <>

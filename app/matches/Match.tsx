@@ -65,7 +65,6 @@ const Match = (props: Props) => {
               </div>
             )}
           </div>
-          <MatchScore isStarted={isStarted} match={props.match} />
         </div>
         <div className="flex flex-col items-center" style={{ width: '35%' }}>
           <Image
@@ -78,6 +77,7 @@ const Match = (props: Props) => {
           <div className="text-center">{props.match.AwayTeam} </div>
         </div>
       </div>
+      <MatchScore isStarted={isStarted} match={props.match} />
     </div>
   )
 }
