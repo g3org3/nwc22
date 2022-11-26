@@ -43,7 +43,7 @@ function calcPoints(match: TMatch, bet: TBet): number {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const id = req.query.id
+  const { id, matchId } = req.query
   const client = new PocketBase('https://pocketbase-production-f6a9.up.railway.app')
 
   if (!id) {
@@ -64,34 +64,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // @ts-ignore
   const bets: TBet[] = (
-    await client
-      .collection('bets')
-      .getList(0, 200, { filter: userids.map((u) => `user_id = '${u}'`).join(' || ') })
+    await client.collection('bets').getList(0, 200, {
+      filter: `match_number = ${matchId} && ( ` + userids.map((u) => `user_id = '${u}'`).join(' || ') + ' )',
+    })
   ).items
 
   const response = await fetch('https://fixturedownload.com/feed/json/fifa-world-cup-2022')
   const matches = (await response.json()) as TMatch[]
 
-  const byMatchNumber: Record<number, TMatch> = matches
-    .filter((m) => m.HomeTeamScore !== null)
-    .reduce<Record<number, TMatch>>((byId, m) => {
-      byId[m.MatchNumber] = m
+  const [match] = matches.filter((m) => m.MatchNumber === Number(matchId))
 
-      return byId
-    }, {})
+  const isStarted = new Date(match.DateUtc.split(' ').join('T')).getTime() > Date.now()
 
-  const betsByUser = bets.reduce<Record<string, any>>((byId, bet) => {
-    const id = bet.user_id as keyof typeof byId
-    if (!byId[id]) {
-      byId[id] = { id, points: 0, bets: [] }
-    }
-    // byId[id].bets.push(bet)
-    if (byMatchNumber[bet.match_number]) {
-      byId[id].points += calcPoints(byMatchNumber[bet.match_number], bet)
-    }
+  // @ts-ignore
+  const history: { bet: TBet; points: number; id: string }[] = bets
+    .map((bet) => ({
+      id: bet.user_id,
+      bet: {
+        ...bet,
+        home_score: isStarted ? '**' : bet.home_score,
+        away_score: isStarted ? '**' : bet.away_score,
+      },
+      points: isStarted ? '-' : calcPoints(match, bet),
+    }))
+    // @ts-ignore
+    .sort((a, b) => (isStarted ? 0 : b.points - a.points))
 
-    return byId
-  }, {})
-
-  res.status(200).json({ betsByUser })
+  res.status(200).json({ match, history })
 }

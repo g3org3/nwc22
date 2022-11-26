@@ -1,4 +1,5 @@
 'use client'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const useQuery = <T,>(
@@ -29,10 +30,12 @@ const useQuery = <T,>(
 export const revalidate = 10
 
 const LeaderB = () => {
+  const searchParams = useSearchParams()
+  const liga = searchParams.get('liga') || ''
   const [id, setId] = useState<string | null>(null)
   const { data } = useQuery<{ betsByUser: Record<string, { id: string; points: number }> }>(
     'get-points',
-    () => fetch('/api/points?id=' + id).then((r) => r.json()),
+    () => fetch('/api/points?id=' + id + '&liga=' + liga).then((r) => r.json()),
     id
   )
 

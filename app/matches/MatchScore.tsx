@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import PocketBase from 'pocketbase'
 import { useEffect, useLayoutEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -9,6 +8,7 @@ import { TMatchD } from './Match'
 
 interface Props {
   isStarted?: boolean
+  isViewOthers?: boolean
   match: TMatchD
 }
 
@@ -213,6 +213,16 @@ const MatchScore = (props: Props) => {
               real score: {props.match.HomeTeamScore} - {props.match.AwayTeamScore}
             </div>
             <div className="text-center">points: +{points}</div>
+            {id && !props.isViewOthers && (
+              <>
+                <Link
+                  className="bg-sky-500 text-white rounded-lg p-2 hover:bg-sky-400"
+                  href={`/matches/${props.match.MatchNumber}`}
+                >
+                  view predictions
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <>

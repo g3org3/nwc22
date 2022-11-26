@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import Image from 'next/image'
 
 import MatchDate from './MatchDate'
@@ -34,6 +33,7 @@ export interface TMatchD extends TMatch {
 
 interface Props {
   match: TMatchD
+  isViewOthers?: boolean
 }
 
 const Match = (props: Props) => {
@@ -70,7 +70,7 @@ const Match = (props: Props) => {
           <div className="text-center">{props.match.AwayTeam} </div>
         </div>
       </div>
-      <MatchScore isStarted={isStarted} match={props.match} />
+      <MatchScore isViewOthers={props.isViewOthers} isStarted={isStarted} match={props.match} />
     </div>
   )
 }
