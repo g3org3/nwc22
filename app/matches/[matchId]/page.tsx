@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react'
 import Match, { getMatches, TMatch, TMatchD } from '../Match'
 
 interface Props {
-  params: {
-    matchId?: string
+  params?: {
+    matchId?: string | null
   }
-  searchParams: {
-    liga?: string
+  searchParams?: {
+    liga?: string | null
   }
 }
 
@@ -58,8 +58,8 @@ const MatchId = (props: Props) => {
       setId(login)
     }
   }, [])
-  const { matchId } = props.params
-  const liga = props.searchParams.liga || ''
+  const matchId = props.params?.matchId || ''
+  const liga = props.searchParams?.liga || ''
 
   const { data } = useQuery<{
     match: TMatch
