@@ -29,7 +29,7 @@ function calcPoints(match: TMatch, bet: TBet): number {
   const matchDate = DateTime.fromISO(match.DateUtc.split(' ').join('T'))
   const betDate = DateTime.fromISO(bet.updated.split(' ').join('T'))
   const diff = matchDate.diff(betDate).milliseconds
-  const validDate = true //diff >= 0
+  const validDate = diff >= 0
 
   if (!validDate) return 0
 
