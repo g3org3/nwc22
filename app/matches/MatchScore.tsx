@@ -1,4 +1,5 @@
 'use client'
+import { DateTime } from 'luxon'
 import Link from 'next/link'
 import PocketBase from 'pocketbase'
 import { useEffect, useLayoutEffect, useState } from 'react'
@@ -127,6 +128,15 @@ const MatchScore = (props: Props) => {
       .filter((x) => x.name)
       .map((x) => [x.name, x.value])
       .reduce((_, x) => ({ ..._, [x[0]]: x[1] }), {}) as { homeScore: string; awayScore: string }
+
+    const matchDate = DateTime.fromISO(props.match.DateUtc.split(' ').join('T'))
+    const diff = matchDate.diffNow().milliseconds
+
+    if (diff < 0) {
+      toast.error('Match has started')
+
+      return
+    }
 
     if (dbMatch?.id) {
       toast.promise(

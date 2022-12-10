@@ -77,6 +77,11 @@ const MatchId = (props: Props) => {
     match.Date = new Date(match.DateUtc)
   }
 
+  const getIsInvalid = (r: any) =>
+    match?.Date &&
+    DateTime.fromJSDate(match.Date).diff(DateTime.fromISO(r.bet.updated.split(' ').join('T'))).milliseconds <
+      0
+
   return (
     <>
       {match && <Match isViewOthers match={match} />}
@@ -97,10 +102,17 @@ const MatchId = (props: Props) => {
                 <td className="p-2 text-center">
                   {r.bet.home_score} - {r.bet.away_score}
                 </td>
-                <td className="p-2 text-center" title={r.bet.updated}>
-                  {DateTime.fromISO(r.bet.updated.split(' ').join('T')).toLocaleString(
-                    DateTime.DATETIME_SHORT
-                  )}
+                <td
+                  className={
+                    getIsInvalid(r) ? 'p-2 text-center font-mono text-red-600' : 'p-2 text-center font-mono'
+                  }
+                  title={r.bet.updated}
+                >
+                  <>
+                    {DateTime.fromISO(r.bet.updated.split(' ').join('T')).toLocaleString(
+                      DateTime.DATETIME_SHORT
+                    )}
+                  </>
                 </td>
                 <td className="p-2 text-center">{r.points}</td>
               </tr>

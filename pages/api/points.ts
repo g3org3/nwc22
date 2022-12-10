@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { DateTime } from 'luxon'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import PocketBase from 'pocketbase'
 
@@ -25,6 +26,13 @@ interface TBet {
 }
 
 function calcPoints(match: TMatch, bet: TBet): number {
+  const matchDate = DateTime.fromISO(match.DateUtc.split(' ').join('T'))
+  const betDate = DateTime.fromISO(bet.updated.split(' ').join('T'))
+  const diff = matchDate.diff(betDate).milliseconds
+  const validDate = true //diff >= 0
+
+  if (!validDate) return 0
+
   let points = 0
   if (bet.home_score - bet.away_score > 0 && match.HomeTeamScore - match.AwayTeamScore > 0) {
     points = 1
