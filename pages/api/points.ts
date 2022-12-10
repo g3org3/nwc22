@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const bets: TBet[] = (
     await client
       .collection('bets')
-      .getList(0, 200, { filter: userids.map((u) => `user_id = '${u}'`).join(' || ') })
+      .getList(0, 600, { filter: userids.map((u) => `user_id = '${u}'`).join(' || ') })
   ).items
 
   const response = await fetch('https://fixturedownload.com/feed/json/fifa-world-cup-2022')
